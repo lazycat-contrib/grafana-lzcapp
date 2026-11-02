@@ -6,11 +6,10 @@ application:
       backend: file:///lzcapp/pkg/content/licenses/
     - location: /
       backend: http://grafana:3000/
-
 services:
   grafana:
-    # upstream: grafana/grafana:13.2.5
-    image: docker.1ms.run/grafana/grafana:13.2.5
+    # upstream: grafana/grafana:13.3.0
+    image: docker.1ms.run/grafana/grafana:13.3.0
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - |-
@@ -29,7 +28,6 @@ services:
       - TZ=Asia/Shanghai
     binds:
       - /lzcapp/var/grafana:/var/lib/grafana
-
 usage: |
   Grafana 是可观测性仪表盘：把多种数据源的指标画成图表，配置告警、共享面板。
 
