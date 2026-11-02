@@ -1,0 +1,18 @@
+package: community.lazycat.app.grafana
+name: Grafana
+version: 0.0.0
+description: "Observability dashboards: chart metrics from many data sources with alerts and sharing."
+min_os_version: "1.5.0"
+homepage: https://github.com/grafana/grafana
+author: Grafana Labs
+license: AGPL-3.0
+permissions:
+  required:
+    - net.internet
+locales:
+  zh:
+    name: Grafana
+    description: "可观测性仪表盘：把多种数据源的指标画成图表，配置告警、共享面板，适合看监控和业务数据。"
+  en:
+    name: Grafana
+    description: "Observability dashboards: chart metrics from many data sources with alerts and sharing."

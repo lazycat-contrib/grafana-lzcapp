@@ -1,0 +1,52 @@
+application:
+  subdomain: grafana
+  multi_instance: false
+  upstreams:
+    - location: /package-licenses/
+      backend: file:///lzcapp/pkg/content/licenses/
+    - location: /
+      backend: http://grafana:3000/
+
+services:
+  grafana:
+    # upstream: grafana/grafana:13.2.5
+    image: docker.1ms.run/grafana/grafana:13.2.5
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - |-
+        GF_SECURITY_ADMIN_PASSWORD={{ .U.admin_password }}
+      # Behind a reverse proxy Grafana must know its external URL, otherwise
+      # assets and redirects point at the container's localhost.
+      - |-
+        GF_SERVER_ROOT_URL=https://{{ .S.AppDomain }}
+      - |-
+        GF_SERVER_DOMAIN={{ .S.AppDomain }}
+      - |-
+        GF_ANALYTICS_REPORTING_ENABLED=false
+      - GF_ANALYTICS_CHECK_FOR_UPDATES=false
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=
+      - TZ=Asia/Shanghai
+    binds:
+      - /lzcapp/var/grafana:/var/lib/grafana
+
+usage: |
+  Grafana 是可观测性仪表盘：把多种数据源的指标画成图表，配置告警、共享面板。
+
+  使用方法：
+  1. 打开应用，用用户名 admin 和你安装时设置的密码登录。
+  2. 在"连接 → 数据源"添加数据源（Prometheus、InfluxDB、MySQL、CSV 等）。
+  3. 新建 Dashboard 添加面板，选数据源和查询即可出图；也能设告警规则。
+
+  数据与安全：
+  - 仪表盘、用户和内置数据库都保存在 /lzcapp/var/grafana，卸载应用会一并删除，请定期备份
+    （也可以在应用内导出 Dashboard 的 JSON 作为备份）。
+  - 管理员密码由你在安装时设置，默认随机生成，不存在内置弱口令。
+  - 管理员用户名固定为 admin；已关闭自助注册与匿名统计。
+  - 应用经懒猫入口鉴权访问。
+
+  说明：
+  - 单容器部署，使用内置 SQLite，无需额外数据库。
+  - 已配置外部访问地址（GF_SERVER_ROOT_URL），避免反代下静态资源和跳转指向容器内网地址。
+  - 未配置邮件服务，告警邮件与找回密码等依赖邮件的功能不可用。
+  - 未做真机验证：登录、加数据源、建面板、配告警以及重启后持久化均未在设备上实测。
